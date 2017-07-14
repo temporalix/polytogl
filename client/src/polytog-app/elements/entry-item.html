@@ -1,0 +1,142 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-icons/editor-icons.html">
+<link rel="import" href="../../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../../bower_components/paper-styles/shadow.html">
+<link rel="import" href="../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="./project-display.html">
+
+<dom-module id="entry-item">
+  <template>
+    <style>
+       :host {
+        display: block;
+      }
+    </style>
+    <custom-style>
+      <style is="custom-style">
+        .shadow-2dp {
+          @apply --shadow-elevation-2dp;
+        }
+        
+        .shadow-3dp {
+          @apply --shadow-elevation-3dp;
+        }
+        
+        .shadow-4dp {
+          @apply --shadow-elevation-4dp;
+        }
+        
+        .shadow-6dp {
+          @apply --shadow-elevation-6dp;
+        }
+        
+        .shadow-8dp {
+          @apply --shadow-elevation-8dp;
+        }
+        
+        .shadow-12dp {
+          @apply --shadow-elevation-12dp;
+        }
+        
+        .shadow-16dp {
+          @apply --shadow-elevation-16dp;
+        }
+        
+        .shadow {
+          display: flex;
+          padding: 8px;
+          margin: 16px;
+        }
+        
+        .billable-entry {
+          --iron-icon-fill-color: green;
+        }
+        
+        .non-billable-entry {
+          --iron-icon-fill-color: lightgrey;
+        }
+        
+        .entry-item {
+          font-size: 14px;
+        }
+      </style>
+    </custom-style>
+    <paper-item class="shadow shadow-2dp entry-item">
+      <!--<p>[[entry.at]]</p>-->
+      <div>
+        [[entry.description]]
+      </div>
+      <div>
+        <project-display></project-display>
+      </div>
+      <div>
+        <iron-icon class$="[[entryClass]]" icon="[[_displayBillable(entry.billable)]]"></iron-icon>
+      </div>
+      <div>
+        [[_getPeriod(entry)]]
+      </div>
+      <!--<p>[[entry.duronly]]</p>
+      <p>[[entry.guid]]</p>
+      <p>[[entry.id]]</p>
+      <p>[[entry.pid]]</p>-->
+      <!--<p>[[entry.uid]]</p>
+      <p>[[entry.wid]]</p>-->
+    </paper-item>
+  </template>
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class EntryItem extends Polymer.Element {
+      static get is() {
+        return 'entry-item';
+      }
+      static get properties() {
+        return {
+          entry: {
+            type: Object,
+            value: {}
+          },
+          entryClass: {
+            type: String,
+            computed: "_getEntryClass(entry)"
+          }
+        };
+      }
+
+      _displayBillable(billable) {
+        if (billable) {
+
+          return "editor:attach-money"
+        } else {
+          return "editor:money-off"
+        }
+      }
+
+      _getEntryClass(entry) {
+        if (entry.billable) {
+          return "billable-entry"
+        } else {
+          return "non-billable-entry"
+        }
+      }
+
+      _getPeriod(entry) {
+        var start = moment(entry.start, moment.ISO_8601);
+        var stop = moment(entry.stop, moment.ISO_8601);
+
+        // console.log(start.format("LT"));
+        // console.log(stop.format("LT"));
+        var day = start.format('dddd ll');
+        return [day, ":", start.format("LT"), "-", stop.format("LT")].join(" ");
+      }
+    }
+
+    window.customElements.define(EntryItem.is, EntryItem);
+  </script>
+</dom-module>

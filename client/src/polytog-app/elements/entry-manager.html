@@ -1,0 +1,53 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-ajax/iron-request.html">
+<link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="./entry-item.html">
+
+<dom-module id="entry-manager">
+    <template>
+        <style>
+             :host {
+                display: block;
+            }
+        </style>
+        <iron-ajax id="togglApi" auto url="http://localhost:3001/entries" handle-as="json" on-response="handleResponse" debounce-duration="300"></iron-ajax>
+        <template is="dom-repeat" items="{{entries}}">
+            <entry-item entry=[[item]]></entry-item>
+        </template>
+    </template>
+    <script>
+        /**
+         * @customElement
+         * @polymer
+         */
+        class EntryManager extends Polymer.Element {
+            static get is() {
+                return 'entry-manager';
+            }
+            static get properties() {
+                return {
+                    entries: {
+                        type: Array,
+                        value: []
+                    }
+                };
+            }
+
+            ready() {
+                 super.ready();
+                 this.$.togglApi.generateRequest();
+            }
+
+            handleResponse(data) {
+                this.set('entries', data.detail.response)
+                console.log(data.detail.response);
+            }
+        }
+
+        window.customElements.define(EntryManager.is, EntryManager);
+    </script>
+</dom-module>

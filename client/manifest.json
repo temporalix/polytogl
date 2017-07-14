@@ -1,0 +1,7 @@
+{
+  "name": "polytog",
+  "short_name": "polytog",
+  "description": "polymer toggl client",
+  "start_url": "/",
+  "display": "standalone"
+}
