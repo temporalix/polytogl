@@ -1,0 +1,75 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../../bower_components/iron-icons/editor-icons.html">
+<link rel="import" href="../../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../../bower_components/paper-styles/shadow.html">
+<link rel="import" href="../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+
+<dom-module id="material-time-input">
+  <template>
+    <style>
+       :host {
+        display: flex;
+        width: 80px;
+        min-width: 80px;
+        max-width: 80px;
+      }
+
+      paper-input{
+        min-width: 38px;
+        width: 38px;
+        max-width: 38px;
+        text-align: center;
+
+         --paper-input-container-input: {
+                    font-size: 30px;
+                }
+                ;
+                --paper-input-container-label: {
+                    font-size: 20px;
+                    /*top: 0px;*/
+                    bottom: -1px;
+                }
+                ;
+                --paper-input-container-label-focus: {
+                    /*top: -9px;*/
+                    bottom: -1px;
+                }
+                ;
+      }
+
+      .seperator{
+        padding-top: 6px;
+      }
+
+    </style>
+      <paper-input no-label-float allowed-pattern="[0-9]" maxlength=2 pattern="([0-1]?[0-9]|2[0-3])" prevent-invalid-input auto-validate></paper-input>
+       <div class="seperator">:</div> 
+      <paper-input no-label-float allowed-pattern="[0-9]" maxlength=2 pattern="([0-5][0-9])" prevent-invalid-input auto-validate></paper-input>
+  </template>
+
+  <script>
+    class MaterialTimeInput extends Polymer.Element {
+      static get is() {
+        return 'material-time-input';
+      }
+      static get properties() {
+        return {
+          // current: {
+          //   type: Object,
+          //   value: {}
+          // },
+        };
+      }
+
+      ready() {
+        super.ready();
+      }
+    }
+    window.customElements.define(MaterialTimeInput.is, MaterialTimeInput);
+  </script>
+
+</dom-module>

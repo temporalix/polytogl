@@ -14,7 +14,7 @@
                 display: block;
             }
         </style>
-        <iron-ajax id="togglApi" auto url="http://localhost:3001/entries" handle-as="json" on-response="handleResponse" debounce-duration="300"></iron-ajax>
+        <iron-ajax id="togglApi" url="http://localhost:3001/entries" handle-as="json" on-response="handleResponse" debounce-duration="300"></iron-ajax>
         <template is="dom-repeat" items="{{entries}}">
             <entry-item entry=[[item]]></entry-item>
         </template>
@@ -43,7 +43,7 @@
             }
 
             handleResponse(data) {
-                this.set('entries', data.detail.response)
+                this.set('entries', data.detail.response);
                 console.log(data.detail.response);
             }
         }

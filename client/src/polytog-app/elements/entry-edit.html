@@ -3,21 +3,29 @@
 <link rel="import" href="../../../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../../bower_components/iron-icons/editor-icons.html">
+<link rel="import" href="../../../bower_components/iron-icons/av-icons.html">
 <link rel="import" href="../../../bower_components/iron-icon/iron-icon.html">
 <link rel="import" href="../../../bower_components/paper-styles/shadow.html">
 <link rel="import" href="../../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../bower_components/iron-ajax/iron-request.html">
+<link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="./entry-time.html">
 <dom-module id="entry-edit">
     <template>
         <style>
              :host {
-                width: 100%;
+                display: flex;
+                flex-grow: 1;
+                padding: 5px;
             }
-            
-            paper-input {
+
+            .entry-desc {
+                margin: 5px;
                 --paper-input-container-input: {
                     font-size: 30px;
                 }
+                flex-grow: 1;
                 ;
                 --paper-input-container-label: {
                     font-size: 20px;
@@ -31,11 +39,52 @@
                 }
                 ;
             }
-        </style>
-        <div>
-            <paper-input label="What are you working on?"></paper-input>
 
-            <!--<div>
+            paper-icon-button {
+                padding: 4px;
+            }
+
+            .start-button {
+                border: 1px solid limegreen;
+                border-radius: 22px;
+                background-color: limegreen;
+                color: white;
+                margin-top: 22px;
+            }
+
+            .stop-button {
+                border: 1px solid red;
+                border-radius: 22px;
+                background-color: red;
+                color: white;
+                margin-top: 22px;
+            }
+
+            .item {
+                font-size: 24px;
+                margin: 5px;
+                margin-top: 14px;
+                min-width: 100px;
+            }
+
+            .status-buttons {
+                display: flex;
+            }
+        </style>
+        <iron-ajax id="togglApi" url="http://localhost:3001/current" handle-as="json" on-response="handleResponse" debounce-duration="300"></iron-ajax>
+
+        <paper-input class="entry-desc" label="What are you working on?" value="{{entry.description}}"></paper-input>
+        <!-- <entry-time id="Time" start-time={{entry.start}} stop-time={{entry.stop}}></entry-time> -->
+        <paper-item class="item">[[totalTime]]</paper-item>
+        <div class="status-buttons">
+            <div hidden$="{{!runningStatus}}">
+                <paper-icon-button class="start-button" on-tap="_setRunningStatus" icon="av:play-arrow"></paper-icon-button>
+            </div>
+            <div hidden$="{{runningStatus}}">
+                <paper-icon-button class="stop-button" on-tap="_setRunningStatus" icon="av:stop"></paper-icon-button>
+            </div>
+        </div>
+        <!--<div>
         [[entry.description]]
       </div>
       <div>
@@ -44,13 +93,13 @@
       <div>
         [[_getPeriod(entry)]]
       </div>-->
-            <!--<p>[[entry.duronly]]</p>
+        <!--<p>[[entry.duronly]]</p>
       <p>[[entry.guid]]</p>
       <p>[[entry.id]]</p>
       <p>[[entry.pid]]</p>-->
-            <!--<p>[[entry.uid]]</p>
+        <!--<p>[[entry.uid]]</p>
       <p>[[entry.wid]]</p>-->
-        </div>
+
     </template>
     <script>
         /**
@@ -65,13 +114,99 @@
                 return {
                     entry: {
                         type: Object,
-                        value: {}
+                        value: {},
+                        observer: "_onEntryChanged"
                     },
                     entryClass: {
                         type: String,
                         computed: "_getEntryClass(entry)"
-                    }
+                    },
+                    totalTime: {
+                        type: String
+                    },
+                    runningStatus: {
+                        type: Boolean,
+                        value: false,
+                       
+                    },
                 };
+            }
+
+            ready() {
+                super.ready();
+                this._getCurrent();
+            }
+
+            _computeRunningStatus() {
+                if (this.entry.start !== undefined) {
+                    if (this.entry.stop === undefined) {
+                        this.runningStatus = true;
+                    }
+                }
+                this.runningStatus = false;
+            }
+
+            _setRunningStatus() {
+                //debugger;
+                this.set('entry.stop', this.entry.start);
+
+                this.runningStatus = !this.runningStatus;
+            }
+
+            handleResponse(data) {
+                if (data.detail.response !== null) {
+                   
+                    if (this.entry.id !== data.detail.response.id) {
+                        this.set('entry', data.detail.response)
+                    }
+                }
+            }
+
+            _onEntryChanged() {
+                if (this.entry.stop === undefined) {
+                    if (this.entry.start !== undefined) {
+                        this.timer(this.entry.start);
+                    }
+                }
+                this.set('totalTime', "0:00:00");
+                this._computeRunningStatus();
+            }
+
+            timer(start) {
+                var startDateTime = moment(start, moment.ISO_8601);
+                var startStamp = startDateTime.unix();
+
+                var newDate = moment();
+                var newStamp = newDate.unix();
+
+                function updateClock() {
+                    newDate = moment();
+                    newStamp = newDate.unix();
+                    var diff = Math.round((newStamp - startStamp));
+
+                    // var d = Math.floor(diff / (24 * 60 * 60));
+                    // diff = diff - (d * 24 * 60 * 60);
+                    var h = Math.floor(diff / (60 * 60));
+                    diff = diff - (h * 60 * 60);
+                    var m = Math.floor(diff / (60));
+                    diff = diff - (m * 60);
+                    var s = diff;
+                    var hourpart = h;
+                    var minutepart = m < 10 ? "0" + m : "" + m;
+                    var secondpart = s < 10 ? "0" + s : "" + s;
+                    this.totalTime = hourpart + " : " + minutepart + " : " + secondpart;
+                }
+
+                setInterval(updateClock.bind(this), 1000);
+            }
+
+            _getCurrent() {
+                this.$.togglApi.generateRequest();
+                function updateCurrent() {
+                    this.$.togglApi.generateRequest();
+                }
+
+                setInterval(updateCurrent.bind(this), 10000);
             }
 
             _displayBillable(billable) {
@@ -95,7 +230,7 @@
                 var start = moment(entry.start, moment.ISO_8601);
                 var stop = moment(entry.stop, moment.ISO_8601);
                 var day = start.format('dddd');
-                return [day, ":" ,start.format("LT"), "-", stop.format("LT")].join(" ");
+                return [day, ":", start.format("LT"), "-", stop.format("LT")].join(" ");
             }
         }
 

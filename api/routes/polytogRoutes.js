@@ -7,6 +7,9 @@ app.route("/entries")
 .get(polyTogList.list_all_entries)
 .post(polyTogList.create_a_entry);
 
+app.route("/current")
+.get(polyTogList.get_current_entry)
+
 app.route("/workspace")
 .post(polyTogList.get_workspace);
 

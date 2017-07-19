@@ -16,7 +16,7 @@ exports.list_all_entries = function (req, res, next) {
             res.send(err);
         }
         else{
-          var processedEntries = _.map(timeEntries, function(timeEntry){
+          var processedEntries = _.map(_.filter(timeEntries,function(item){ return item.stop !== undefined;}), function(timeEntry){
               var item = timeEntry;
               item.start = moment(timeEntry.start, moment.ISO_8601);
                item.stop = moment(timeEntry.stop, moment.ISO_8601);
@@ -24,7 +24,7 @@ exports.list_all_entries = function (req, res, next) {
                return item;
           });
 
-        res.json(_.sortBy(processedEntries, function(item) { return item.start }).reverse());
+        res.json(_.sortBy(processedEntries, function(item) { return item.start; }).reverse());
         }
         
     });

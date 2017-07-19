@@ -13,7 +13,8 @@
     "paper-item": "^2.0.0",
     "moment": "^2.18.1",
     "paper-input": "^2.0.1",
-    "paper-chip": "fabbricadigitale/paper-chip#^0.10.0"
+    "paper-chip": "fabbricadigitale/paper-chip#^0.10.0",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^6.0.0",
