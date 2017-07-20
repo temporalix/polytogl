@@ -126,7 +126,7 @@
                     },
                     runningStatus: {
                         type: Boolean,
-                        value: false,
+                        value: true,
                        
                     },
                 };
@@ -138,12 +138,13 @@
             }
 
             _computeRunningStatus() {
+                this.runningStatus = true;
                 if (this.entry.start !== undefined) {
                     if (this.entry.stop === undefined) {
-                        this.runningStatus = true;
+                        this.runningStatus = false;
                     }
                 }
-                this.runningStatus = false;
+                
             }
 
             _setRunningStatus() {
