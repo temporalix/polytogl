@@ -8,6 +8,7 @@ var moment = require('moment');
 
 var toggl = new togglClient({
     apiToken: '#toggltoken#'
+  
 });
 
 exports.list_all_entries = function (req, res, next) {
