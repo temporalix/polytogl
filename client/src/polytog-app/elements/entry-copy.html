@@ -1,0 +1,118 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="../../../bower_components/iron-ajax/iron-request.html">
+<link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../../bower_components/range-datepicker/range-datepicker.html">
+<link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
+
+<dom-module id="entry-copy">
+    <template>
+        <style>
+             :host {
+                display: block;
+            }
+
+            .dialog-content {
+                border-top: 1px solid lightgrey;
+                border-bottom: 1px solid lightgrey
+            }
+        </style>
+
+        <iron-ajax method="POST" id="togglApiQuick" url="http://localhost:3001/quickCreate" content-type="application/json" handle-as="json"
+            on-response="handleCreate" debounce-duration="300"></iron-ajax>
+
+        <paper-dialog id="dateRangeDialog" on-iron-overlay-closed="_clear">
+            <h2>Enter Range</h2>
+            <div class="dialog-content">
+                <range-datepicker date-from="{{dateFrom}}" date-to="{{dateTo}}"></range-datepicker>
+            </div>
+            <div class="buttons">
+                 <paper-icon-button class="copy-icon" icon="close" on-tap="cancelCopy"></paper-icon-button>
+                <paper-icon-button class="copy-icon" icon="done" on-tap="acceptCopy"></paper-icon-button>
+            </div>
+        </paper-dialog>
+
+
+    </template>
+    <script>
+        /**
+         * @customElement
+         * @polymer
+         */
+        class EntryCopy extends Polymer.Element {
+            static get is() {
+                return 'entry-copy';
+            }
+            static get properties() {
+                return {
+                    timeEntryId: {
+                        type: Number
+                    },
+                    dateFrom: {
+                        type: Number
+                    },
+                    dateTo: {
+                        type: Number
+                    }
+                };
+            }
+
+            ready() {
+                super.ready();
+
+
+
+                this.addEventListener('copytest', function (e) {
+
+                    console.log("reached");
+                });
+
+                this.addEventListener('copytestup', function (e) {
+
+                    console.log("reached child");
+                });
+
+
+
+                this.addEventListener('copyEntry', function (e) {
+                    debugger;
+                    if (e.detail.id && e.detail.id == timeEntryId) {
+                        debugger;
+                        this.openDialog(e.detail);
+                    }
+
+                });
+            }
+
+            openDialog(id) {
+                this.$.dateRangeDialog.open();
+            }
+
+            acceptCopy(event) {
+
+
+                this.$.togglApiQuick.body = { "id": this.timeEntryId, "from": this.dateFrom, "to": this.dateTo };
+                this.$.togglApiQuick.generateRequest();
+            }
+
+            cancelCopy(){
+                this.$.dateRangeDialog.close();
+                this._clear();
+            }
+
+            _clear() {
+                this.set('dateFrom', null);
+                this.set('dateFrom', undefined);
+
+                this.set('dateTo', null);
+                this.set('dateTo', undefined);
+            }
+        }
+
+        window.customElements.define(EntryCopy.is, EntryCopy);
+    </script>
+</dom-module>

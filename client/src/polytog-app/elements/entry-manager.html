@@ -5,7 +5,9 @@
 <link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../../bower_components/iron-ajax/iron-request.html">
 <link rel="import" href="../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../../bower_components/app-datepicker/app-datepicker-dialog.html">
 <link rel="import" href="./entry-item.html">
+<link rel="import" href="./entry-copy.html">
 
 <dom-module id="entry-manager">
     <template>
@@ -13,10 +15,23 @@
              :host {
                 display: block;
             }
+
+            .copy-icon {
+                float: left;
+                margin-top: 10px;
+                margin-left: 5px;
+                margin-right: 10px;
+            }
         </style>
         <iron-ajax id="togglApi" url="http://localhost:3001/entries" handle-as="json" on-response="handleResponse" debounce-duration="300"></iron-ajax>
+        <iron-ajax method="POST" id="togglApiQuick" url="http://localhost:3001/quickCreate" content-type="application/json" handle-as="json"
+            on-response="handleCreate" debounce-duration="300"></iron-ajax>
         <template is="dom-repeat" items="{{entries}}">
+           
+            <paper-icon-button class="copy-icon" icon="content-copy" data-id$="[[item.id]]" on-tap="_copy"></paper-icon-button>
+            <entry-copy class$="[[_computedClass(item)]]" time-entry-id="[[item.id]]"></entry-copy>
             <entry-item entry=[[item]]></entry-item>
+               
         </template>
     </template>
     <script>
@@ -33,19 +48,71 @@
                     entries: {
                         type: Array,
                         value: []
-                    }
+                    },
+
                 };
             }
 
             ready() {
-                 super.ready();
-                 this.$.togglApi.generateRequest();
+                super.ready();
+                this.$.togglApi.generateRequest();
+
+                  this.addEventListener('copytest', function (e) {
+                    
+                    console.log("reached parent");
+                });
+
+                 this.addEventListener('copytestup', function (e) {
+                    
+                    console.log("reached");
+                });
+            }
+
+            _copy(event) {
+                var e = event || window.event;
+                var target = e.target || e.srcElement
+
+                var id =target.dataset.id;
+               // var temp = this.$$("#entryCopy_"+id);
+             //  var btn1 = document.querySelector("entry-copy");
+               //var temp1 = Polymer.dom(this.root).querySelector("#entryCopy_"+id)
+
+            //     var btn = document.querySelector(".entryCopy_"+id);
+                var temp = Polymer.dom(this.root).querySelector(".entryCopy_"+id)
+               // debugger;
+                 temp.openDialog();
+            // var event = new CustomEvent('copytest', {bubbles: true, composed: true});
+            //  this.dispatchEvent(event);
+            //  window.dispatchEvent(event);
+                // window.dispatchEvent(new CustomEvent('copyEntry', {detail: {id: id}}));
+                //this.shadowRoot.querySelector('#entryCopy_'+id).open();
+               
+                // this.$.togglApiQuick.body = { "id" : this.timeEntryId, "days": 3};
+                // this.$.togglApiQuick.generateRequest();
+
+            }
+
+           // _getEntryID(item) {
+                //var e = event || window.event;
+               // var target = e.target || e.srcElement;
+
+               // var id =target.dataset.id;
+                //console.log(id);
+
+             //   return "entryCopyItem_"+item.id;
+            //}
+
+            _computedClass(item){
+                return "entryCopy_"+item.id;
             }
 
             handleResponse(data) {
                 this.set('entries', data.detail.response);
                 console.log(data.detail.response);
             }
+
+
+
         }
 
         window.customElements.define(EntryManager.is, EntryManager);

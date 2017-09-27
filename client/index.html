@@ -3,12 +3,31 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
-
+    <base href="/">
     <title>polytog</title>
     <meta name="description" content="polymer toggl client">
 
     <link rel="manifest" href="/manifest.json">
     
+    <!-- <script>
+      var bases = document.getElementsByTagName('base');
+var baseUrl = null;
+
+if (bases.length > 0) {
+    baseUrl = bases[0].href;
+}
+debugger;
+        // Register the base URL
+      //  const baseUrl = document.querySelector('base').href;
+
+        // Load and register pre-caching Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register(baseUrl + '/service-worker.js');
+            });
+        }
+    </script> -->
+
     <!--<script defer src="/__/firebase/4.1.3/firebase-app.js"></script>
     <script defer src="/__/firebase/4.1.3/firebase-auth.js"></script>
     <script defer src="/__/firebase/4.1.3/firebase-database.js"></script>

@@ -1,6 +1,7 @@
 module.exports = Entry;
 
 function Entry(data) {
+    this.id = data.id;
     this.wid = data.wid;
     this.pid = data.pid;
     //this.billable = data.billable;

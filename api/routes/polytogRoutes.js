@@ -8,7 +8,10 @@ app.route("/entries")
 .post(polyTogList.create_a_entry);
 
 app.route("/current")
-.get(polyTogList.get_current_entry)
+.get(polyTogList.get_current_entry);
+
+app.route("/quickCreate")
+.post(polyTogList.quick_create);
 
 app.route("/workspace")
 .post(polyTogList.get_workspace);
